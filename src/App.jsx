@@ -56,11 +56,6 @@ const topics = [
   'Hope in Suffering',
 ]
 
-const stack = {
-  frontend: ['React (Vite)', 'Tailwind-inspired utility styles', 'React Router DOM', 'React Icons'],
-  backend: ['PHP API layer', 'SQLite data store', 'Session-authenticated accounts', 'Search-ready Bible text tables'],
-}
-
 function App() {
   return (
     <div className="app">
@@ -81,12 +76,12 @@ function App() {
             Foundational studies at launch
           </li>
           <li>
-            <strong>SQLite</strong>
-            Secure notes & journaling
+            <strong>Daily</strong>
+            Readings & reflection prompts
           </li>
           <li>
-            <strong>PHP</strong>
-            Lightweight API endpoints
+            <strong>Private</strong>
+            Notes saved to your account
           </li>
         </ul>
       </header>
@@ -142,38 +137,13 @@ function App() {
         </div>
       </section>
 
-      <section className="stack" aria-labelledby="stack-heading">
-        <div className="section-heading">
-          <p className="eyebrow">Under the hood</p>
-          <h2 id="stack-heading">Simple architecture, ready for PHP + SQLite hosting</h2>
-        </div>
-        <div className="stack__columns">
-          <div>
-            <h3>Frontend</h3>
-            <ul>
-              {stack.frontend.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h3>Backend</h3>
-            <ul>
-              {stack.backend.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
       <section className="cta">
         <div>
           <p className="eyebrow">Mission</p>
           <h2>Tea Time helps Shane & Vicki grow closer to God and invite others into the practice.</h2>
           <p>
-            Accounts include registration, login, hashed passwords, and gentle analytics for progress tracking. Deployment targets
-            tea-time.shanemichel.net with PHP + SQLite ready to serve the public site and private reflections.
+            We’re building a quiet place to open Scripture, talk with Jesus, and remember what He’s teaching from one season to the next.
+            No jargon—just simple rhythms that keep hearts anchored to the Word.
           </p>
         </div>
         <button className="btn primary">Join the waiting list</button>

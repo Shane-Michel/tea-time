@@ -21,7 +21,7 @@ export function logError(message, details = {}) {
       return
     }
   } catch (err) {
-    // Fall through to fetch when sendBeacon is unavailable or fails.
+    console.log(err);
   }
 
   fetch(LOG_ENDPOINT, {

@@ -2,8 +2,10 @@
 declare(strict_types=1);
 
 // Basic bootstrap for SQLite + session-backed API.
+$isCli = PHP_SAPI === 'cli';
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+if (!$isCli && $requestMethod === 'OPTIONS') {
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
     header('Access-Control-Allow-Credentials: true');
@@ -13,21 +15,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-if (isset($_SERVER['HTTP_ORIGIN'])) {
+if (!$isCli && isset($_SERVER['HTTP_ORIGIN'])) {
     header('Access-Control-Allow-Origin: ' . $_SERVER['HTTP_ORIGIN']);
     header('Vary: Origin');
 }
-header('Access-Control-Allow-Credentials: true');
-header('Content-Type: application/json');
 
-session_set_cookie_params([
-    'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
-    'httponly' => true,
-    'samesite' => 'Lax',
-]);
-session_start();
+if (!$isCli) {
+    header('Access-Control-Allow-Credentials: true');
+    header('Content-Type: application/json');
 
-$dbPath = __DIR__ . '/database.sqlite';
+    session_set_cookie_params([
+        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off',
+        'httponly' => true,
+        'samesite' => 'Lax',
+    ]);
+}
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$dbPath = getenv('DATABASE_PATH') ?: __DIR__ . '/database.sqlite';
 $pdo = new PDO('sqlite:' . $dbPath);
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 $pdo->exec('PRAGMA foreign_keys = ON');
@@ -289,6 +297,9 @@ function respond($data, int $status = 200): void
 {
     http_response_code($status);
     echo json_encode($data);
+    if (getenv('APP_TESTING')) {
+        return;
+    }
     exit;
 }
 

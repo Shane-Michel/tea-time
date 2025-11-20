@@ -5,6 +5,11 @@ declare(strict_types=1);
 $isCli = PHP_SAPI === 'cli';
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
+define('APP_LOG_DIR', __DIR__ . '/storage/logs');
+if (!is_dir(APP_LOG_DIR)) {
+    mkdir(APP_LOG_DIR, 0775, true);
+}
+
 if (!$isCli && $requestMethod === 'OPTIONS') {
     header('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE, OPTIONS');
     header('Access-Control-Allow-Headers: Content-Type');
@@ -34,6 +39,32 @@ if (!$isCli) {
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
+
+set_error_handler(function (int $severity, string $message, string $file, int $line): void {
+    app_log('error', 'PHP runtime error', [
+        'severity' => $severity,
+        'message' => $message,
+        'file' => $file,
+        'line' => $line,
+    ]);
+
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
+
+set_exception_handler(function (Throwable $exception): void {
+    app_log('error', 'Unhandled exception', [
+        'message' => $exception->getMessage(),
+        'file' => $exception->getFile(),
+        'line' => $exception->getLine(),
+        'trace' => $exception->getTraceAsString(),
+    ]);
+
+    if (getenv('APP_TESTING')) {
+        throw $exception;
+    }
+
+    respond(['error' => 'Server error. Please try again later.'], 500);
+});
 
 $dbPath = getenv('DATABASE_PATH') ?: __DIR__ . '/database.sqlite';
 $pdo = new PDO('sqlite:' . $dbPath);
@@ -293,9 +324,36 @@ function json_body(): array
     return is_array($data) ? $data : [];
 }
 
+function app_log(string $level, string $message, array $context = []): void
+{
+    $destination = APP_LOG_DIR . '/app.log';
+    $baseContext = [
+        'ip' => $_SERVER['REMOTE_ADDR'] ?? 'cli',
+        'path' => $_SERVER['REQUEST_URI'] ?? 'cli',
+        'user_agent' => $_SERVER['HTTP_USER_AGENT'] ?? null,
+    ];
+
+    $entry = [
+        'timestamp' => date(DATE_ATOM),
+        'level' => $level,
+        'message' => $message,
+        'context' => array_merge($baseContext, $context),
+    ];
+
+    file_put_contents($destination, json_encode($entry, JSON_UNESCAPED_SLASHES) . PHP_EOL, FILE_APPEND);
+}
+
 function respond($data, int $status = 200): void
 {
     http_response_code($status);
+
+    if ($status >= 400) {
+        app_log($status >= 500 ? 'error' : 'warning', 'API response', [
+            'status' => $status,
+            'payload' => $data,
+        ]);
+    }
+
     echo json_encode($data);
     if (getenv('APP_TESTING')) {
         return;

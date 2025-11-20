@@ -314,6 +314,24 @@ function handle_topics(PDO $pdo): void
     respond(['topics' => $topics]);
 }
 
+function handle_client_log(): void
+{
+    $payload = json_body();
+    $message = trim($payload['message'] ?? '');
+    $details = $payload['details'] ?? [];
+
+    if ($message === '') {
+        respond(['error' => 'message is required'], 422);
+    }
+
+    app_log('client', $message, [
+        'details' => is_array($details) ? $details : ['value' => $details],
+        'user_id' => $_SESSION['user_id'] ?? null,
+    ]);
+
+    respond(['success' => true], 201);
+}
+
 function handle_topic_detail(PDO $pdo, string $slug): void
 {
     $stmt = $pdo->prepare('SELECT id, slug, title, summary, filters FROM topics WHERE slug = ?');
@@ -384,6 +402,9 @@ switch (true) {
         break;
     case preg_match('#^/api/topics/([^/]+)$#', $path, $matches) && $method === 'GET':
         handle_topic_detail($pdo, $matches[1]);
+        break;
+    case $path === '/api/logs' && $method === 'POST':
+        handle_client_log();
         break;
     default:
         respond(['error' => 'Not found'], 404);

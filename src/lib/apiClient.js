@@ -1,18 +1,33 @@
+import { logError } from './logger'
+
 const API_BASE = '/api'
 
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    credentials: 'include',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options.headers || {}),
-    },
-    ...options,
-  })
+  let response
+
+  try {
+    response = await fetch(`${API_BASE}${path}`, {
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      ...options,
+    })
+  } catch (err) {
+    logError('Network request failed', { path, message: err?.message })
+    throw err
+  }
 
   const data = await response.json().catch(() => ({}))
   if (!response.ok) {
     const error = data.error || 'Request failed'
+    logError('API error response', {
+      path,
+      status: response.status,
+      statusText: response.statusText,
+      error,
+    })
     throw new Error(error)
   }
   return data

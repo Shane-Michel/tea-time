@@ -67,4 +67,21 @@ export const api = {
   async removeBookmark(id) {
     return request(`/bookmarks/${id}`, { method: 'DELETE' })
   },
+  async searchBible(params) {
+    const usp = new URLSearchParams(params)
+    return request(`/bible/search?${usp.toString()}`, { method: 'GET' })
+  },
+  async lookupVerse(params) {
+    const usp = new URLSearchParams(params)
+    return request(`/bible/lookup?${usp.toString()}`, { method: 'GET' })
+  },
+  async listTopics(params = {}) {
+    const usp = new URLSearchParams(params)
+    const query = usp.toString()
+    const suffix = query ? `?${query}` : ''
+    return request(`/topics${suffix}`, { method: 'GET' })
+  },
+  async getTopic(slug) {
+    return request(`/topics/${slug}`, { method: 'GET' })
+  },
 }

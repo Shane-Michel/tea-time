@@ -1,0 +1,37 @@
+[
+  {
+    "slug": "peace-in-waiting",
+    "title": "Peace in Waiting",
+    "summary": "Rest in God’s timing with prayers that steady the heart while you wait.",
+    "filters": ["peace", "waiting", "trust"],
+    "references": ["Psalm 27:1", "Psalm 27:14", "Isaiah 40:31", "Philippians 4:6", "Philippians 4:7", "John 14:27"]
+  },
+  {
+    "slug": "prayer-and-fasting",
+    "title": "Prayer & Fasting",
+    "summary": "Scriptures that invite deeper dependence, quiet rooms, and justice-minded fasting.",
+    "filters": ["prayer", "fasting", "discipline"],
+    "references": ["Matthew 6:6", "Isaiah 58:6", "Matthew 5:6", "Matthew 11:28", "Psalm 23:1"]
+  },
+  {
+    "slug": "courage-and-calling",
+    "title": "Courage & Calling",
+    "summary": "Encouragement for stepping forward when God asks you to lead or speak.",
+    "filters": ["courage", "calling"],
+    "references": ["Joshua 1:9", "Esther 4:14", "Matthew 5:10", "Mark 10:45", "Romans 8:28"]
+  },
+  {
+    "slug": "identity-in-christ",
+    "title": "Identity in Christ",
+    "summary": "Remember whose you are and how grace reshapes belonging.",
+    "filters": ["identity", "belonging", "grace"],
+    "references": ["John 1:12", "2 Corinthians 5:17", "Romans 5:8", "Colossians 3:12", "Colossians 3:14"]
+  },
+  {
+    "slug": "hope-in-suffering",
+    "title": "Hope in Suffering",
+    "summary": "Comfort and future hope when burdens feel heavy.",
+    "filters": ["hope", "suffering", "comfort"],
+    "references": ["Psalm 23:4", "Psalm 46:1", "2 Corinthians 4:17", "Romans 8:38", "Romans 8:39", "Revelation 21:4"]
+  }
+]

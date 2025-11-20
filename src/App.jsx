@@ -8,6 +8,7 @@ import Notes from './pages/Notes'
 import NotFound from './pages/NotFound'
 import Reader from './pages/Reader'
 import Studies from './pages/Studies'
+import Bible from './pages/Bible'
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/studies" element={<Studies />} />
+        <Route path="/bible" element={<Bible />} />
         <Route path="/reader" element={<Reader />} />
         <Route path="/notes" element={<Notes />} />
         <Route path="/account" element={<Account />} />

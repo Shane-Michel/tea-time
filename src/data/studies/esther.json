@@ -1,0 +1,140 @@
+{
+  "id": "esther",
+  "title": "Book of Esther",
+  "subtitle": "Courage in the Quiet",
+  "summary": "Ten contemplative readings that uncover God’s hidden work in seasons of uncertainty and waiting.",
+  "theme": "Narrative",
+  "estimatedMinutes": 18,
+  "days": [
+    {
+      "day": 1,
+      "title": "A hidden arrival",
+      "summary": "Meet Esther and Mordecai in exile and notice how they carry quiet faith in a foreign land.",
+      "readings": [
+        {
+          "reference": "Esther 1:1-22",
+          "focus": "Vashti’s refusal and the opening tension",
+          "note": "The book never mentions God directly, inviting you to look for His providence between the lines."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Where do you feel unseen or out of place right now?",
+          "type": "honesty"
+        },
+        {
+          "question": "How might God already be preparing a way forward?",
+          "type": "trust"
+        }
+      ],
+      "reflection": [
+        "How does Esther’s situation mirror places you feel powerless?",
+        "Pray for courage to stay faithful in hidden seasons."
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Chosen for a purpose",
+      "summary": "Watch Esther’s rise to the throne and consider how God positions people for His timing.",
+      "readings": [
+        {
+          "reference": "Esther 2:1-18",
+          "focus": "Esther’s preparation and favor",
+          "note": "Esther’s Hebrew name Hadassah hints at her roots even as she lives in Persia."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Where have you found unexpected favor?",
+          "type": "gratitude"
+        },
+        {
+          "question": "What gifts or positions has God entrusted to you for others’ good?",
+          "type": "calling"
+        }
+      ],
+      "reflection": [
+        "Write about a time God used an ordinary step to open a door.",
+        "Pray over the influence you hold today, however small it seems."
+      ]
+    },
+    {
+      "day": 3,
+      "title": "A plot uncovered",
+      "summary": "Explore Mordecai’s loyalty and the seeds of conflict with Haman.",
+      "readings": [
+        {
+          "reference": "Esther 2:19-3:15",
+          "focus": "Mordecai’s stand and Haman’s fury",
+          "note": "Notice how refusal to bow becomes a matter of worship and identity."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Where is God inviting you to stand firm without bitterness?",
+          "type": "courage"
+        },
+        {
+          "question": "How do you respond when obedience has relational cost?",
+          "type": "reflection"
+        }
+      ],
+      "reflection": [
+        "What fears surface when you imagine taking a costly stand?",
+        "Ask God for humility and resolve."
+      ]
+    },
+    {
+      "day": 4,
+      "title": "For such a time",
+      "summary": "Hear Mordecai’s appeal and Esther’s brave decision to risk approaching the king.",
+      "readings": [
+        {
+          "reference": "Esther 4:1-17",
+          "focus": "Lament, fasting, and resolve",
+          "note": "Community fasting surrounds Esther’s decision; notice the shared dependence on God."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "What decision before you needs communal prayer?",
+          "type": "community"
+        },
+        {
+          "question": "How does fasting sharpen Esther’s courage?",
+          "type": "spiritual-practice"
+        }
+      ],
+      "reflection": [
+        "Name where God might have placed you “for such a time as this.”",
+        "Pray for boldness coupled with humility."
+      ]
+    },
+    {
+      "day": 5,
+      "title": "The turning point",
+      "summary": "Join Esther’s first feast and watch tension build before the reversal.",
+      "readings": [
+        {
+          "reference": "Esther 5:1-14",
+          "focus": "Courageous approach and Haman’s pride",
+          "note": "The suspense heightens as Esther moves slowly and wisely."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "How do patience and strategy serve courage?",
+          "type": "wisdom"
+        },
+        {
+          "question": "Where might pride be blinding in your own life?",
+          "type": "confession"
+        }
+      ],
+      "reflection": [
+        "Invite God to refine your motives when you take risks.",
+        "List the people who pray with you as you step forward."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F5F0E8" />
+      <stop offset="100%" stop-color="#D9CBB8" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <circle cx="230" cy="315" r="160" fill="#A7B9A5" opacity="0.15" />
+  <circle cx="970" cy="160" r="120" fill="#C8A94D" opacity="0.12" />
+  <text x="120" y="210" fill="#3B342A" font-family="'Georgia', serif" font-size="52" font-weight="bold">Tea Time Bible Study</text>
+  <text x="120" y="270" fill="#5A5247" font-family="'Georgia', serif" font-size="30">Daily Scripture &amp; Quiet Ritual</text>
+  <rect x="120" y="320" width="320" height="180" rx="28" fill="#FFFFFF" stroke="#D9CBB8" stroke-width="6" />
+  <text x="150" y="380" fill="#3B342A" font-family="'Georgia', serif" font-size="28">🍵 Slow down with</text>
+  <text x="150" y="420" fill="#3B342A" font-family="'Georgia', serif" font-size="32" font-weight="bold">guided NIV readings</text>
+  <text x="150" y="460" fill="#5A5247" font-family="'Georgia', serif" font-size="22">Notes · Bookmarks · Progress</text>
+  <text x="120" y="540" fill="#5A5247" font-family="'Arial', sans-serif" font-size="20">https://tea-time.shanemichel.net</text>
+</svg>

@@ -5,9 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run generate:seo && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate:seo": "node scripts/generate-sitemap.js",
+    "test:frontend": "node --test src/__tests__/frontend.test.js",
+    "test:backend": "php api/tests/unit.php && php api/tests/integration.php",
+    "test": "npm run test:frontend && npm run test:backend"
   },
   "dependencies": {
     "react": "^19.2.0",

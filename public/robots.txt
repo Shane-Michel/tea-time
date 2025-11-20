@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Host: tea-time.shanemichel.net
+Sitemap: https://tea-time.shanemichel.net/sitemap.xml

@@ -4,6 +4,7 @@ import Button from './Button'
 const links = [
   { to: '/', label: 'Home' },
   { to: '/studies', label: 'Studies' },
+  { to: '/bible', label: 'Bible & Search' },
   { to: '/reader', label: 'Reader' },
   { to: '/notes', label: 'Notes' },
   { to: '/account', label: 'Account' },

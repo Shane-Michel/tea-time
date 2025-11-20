@@ -195,6 +195,145 @@ function handle_bookmark_item(PDO $pdo, array $user, int $bookmarkId): void
     respond(['success' => true]);
 }
 
+function handle_bible_lookup(PDO $pdo): void
+{
+    $reference = trim($_GET['reference'] ?? '');
+    $book = $_GET['book'] ?? null;
+    $chapter = isset($_GET['chapter']) ? (int) $_GET['chapter'] : null;
+    $verse = isset($_GET['verse']) ? (int) $_GET['verse'] : null;
+
+    if ($reference !== '') {
+        $parsed = parse_reference($reference);
+        if (!$parsed || !$parsed['verse']) {
+            respond(['error' => 'reference must include book, chapter, and verse'], 422);
+        }
+        $book = $parsed['book'];
+        $chapter = $parsed['chapter'];
+        $verse = $parsed['verse'];
+    }
+
+    if (!$book || !$chapter || !$verse) {
+        respond(['error' => 'reference, or book + chapter + verse are required'], 422);
+    }
+
+    $stmt = $pdo->prepare('SELECT id, book, chapter, verse, text, testament FROM bible WHERE book = ? AND chapter = ? AND verse = ?');
+    $stmt->execute([$book, $chapter, $verse]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$row) {
+        respond(['error' => 'Verse not found'], 404);
+    }
+
+    $contextStart = max(1, $verse - 2);
+    $contextEnd = $verse + 2;
+    $contextStmt = $pdo->prepare('SELECT verse, text FROM bible WHERE book = ? AND chapter = ? AND verse BETWEEN ? AND ? ORDER BY verse');
+    $contextStmt->execute([$book, $chapter, $contextStart, $contextEnd]);
+    $context = $contextStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $topicsStmt = $pdo->prepare('SELECT t.slug, t.title FROM topic_passages tp JOIN topics t ON t.id = tp.topic_id WHERE tp.bible_id = ?');
+    $topicsStmt->execute([$row['id']]);
+    $topics = $topicsStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    respond(['verse' => $row, 'context' => $context, 'topics' => $topics]);
+}
+
+function handle_bible_search(PDO $pdo): void
+{
+    $query = trim($_GET['q'] ?? '');
+    if ($query === '') {
+        respond(['error' => 'q is required'], 422);
+    }
+
+    $testament = $_GET['testament'] ?? null;
+    $book = $_GET['book'] ?? null;
+    $topicSlug = $_GET['topic'] ?? null;
+    $focus = $_GET['filter'] ?? null;
+
+    $sql = 'SELECT b.id, b.book, b.chapter, b.verse, b.text, b.testament, snippet(bible_fts, -1, "<mark>", "</mark>", " … ", 8) AS snippet
+        FROM bible_fts
+        JOIN bible b ON b.id = bible_fts.rowid';
+    $conditions = ['bible_fts MATCH :query'];
+    $params = [':query' => $query];
+
+    if ($topicSlug || $focus) {
+        $sql .= ' JOIN topic_passages tp ON tp.bible_id = b.id JOIN topics t ON t.id = tp.topic_id';
+    }
+    if ($testament) {
+        $conditions[] = 'b.testament = :testament';
+        $params[':testament'] = $testament;
+    }
+    if ($book) {
+        $conditions[] = 'b.book = :book';
+        $params[':book'] = $book;
+    }
+    if ($topicSlug) {
+        $conditions[] = 't.slug = :topic';
+        $params[':topic'] = $topicSlug;
+    }
+    if ($focus) {
+        $conditions[] = 't.filters LIKE :focus';
+        $params[':focus'] = '%' . $focus . '%';
+    }
+
+    $sql .= ' WHERE ' . implode(' AND ', $conditions) . ' ORDER BY b.book, b.chapter, b.verse LIMIT 50';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    respond(['results' => $results]);
+}
+
+function handle_topics(PDO $pdo): void
+{
+    $filter = $_GET['filter'] ?? null;
+    $search = trim($_GET['q'] ?? '');
+
+    $sql = 'SELECT id, slug, title, summary, filters FROM topics';
+    $conditions = [];
+    $params = [];
+    if ($filter) {
+        $conditions[] = 'filters LIKE :filter';
+        $params[':filter'] = '%' . $filter . '%';
+    }
+    if ($search !== '') {
+        $conditions[] = '(title LIKE :search OR summary LIKE :search)';
+        $params[':search'] = '%' . $search . '%';
+    }
+    if ($conditions) {
+        $sql .= ' WHERE ' . implode(' AND ', $conditions);
+    }
+
+    $sql .= ' ORDER BY title';
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute($params);
+    $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $topics = array_map(function ($topic) {
+        $topic['filters'] = $topic['filters'] ? json_decode((string) $topic['filters'], true) : [];
+        return $topic;
+    }, $topics);
+
+    respond(['topics' => $topics]);
+}
+
+function handle_topic_detail(PDO $pdo, string $slug): void
+{
+    $stmt = $pdo->prepare('SELECT id, slug, title, summary, filters FROM topics WHERE slug = ?');
+    $stmt->execute([$slug]);
+    $topic = $stmt->fetch(PDO::FETCH_ASSOC);
+    if (!$topic) {
+        respond(['error' => 'Topic not found'], 404);
+    }
+    $topic['filters'] = $topic['filters'] ? json_decode((string) $topic['filters'], true) : [];
+
+    $passages = $pdo->prepare('SELECT b.book, b.chapter, b.verse, b.text, b.testament
+        FROM topic_passages tp
+        JOIN bible b ON b.id = tp.bible_id
+        WHERE tp.topic_id = ?
+        ORDER BY b.book, b.chapter, b.verse');
+    $passages->execute([(int) $topic['id']]);
+
+    respond(['topic' => $topic, 'passages' => $passages->fetchAll(PDO::FETCH_ASSOC)]);
+}
+
 switch (true) {
     case $path === '/api/auth/register' && $method === 'POST':
         handle_auth_register($pdo);
@@ -233,6 +372,18 @@ switch (true) {
     case preg_match('#^/api/bookmarks/(\d+)$#', $path, $matches):
         $user = require_auth($pdo);
         handle_bookmark_item($pdo, $user, (int) $matches[1]);
+        break;
+    case $path === '/api/bible/lookup' && $method === 'GET':
+        handle_bible_lookup($pdo);
+        break;
+    case $path === '/api/bible/search' && $method === 'GET':
+        handle_bible_search($pdo);
+        break;
+    case $path === '/api/topics' && $method === 'GET':
+        handle_topics($pdo);
+        break;
+    case preg_match('#^/api/topics/([^/]+)$#', $path, $matches) && $method === 'GET':
+        handle_topic_detail($pdo, $matches[1]);
         break;
     default:
         respond(['error' => 'Not found'], 404);

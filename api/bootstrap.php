@@ -35,6 +35,19 @@ $pdo->exec('PRAGMA foreign_keys = ON');
 /**
  * Run required migrations when the database is first created.
  */
+function table_has_column(PDO $pdo, string $table, string $column): bool
+{
+    $stmt = $pdo->prepare("PRAGMA table_info('" . $table . "')");
+    $stmt->execute();
+    $columns = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($columns as $col) {
+        if (($col['name'] ?? '') === $column) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function migrate(PDO $pdo): void
 {
     $pdo->exec('CREATE TABLE IF NOT EXISTS users (
@@ -85,19 +98,177 @@ function migrate(PDO $pdo): void
         chapter INTEGER NOT NULL,
         verse INTEGER NOT NULL,
         text TEXT NOT NULL,
+        testament TEXT,
         UNIQUE(book, chapter, verse)
     )');
 
+    if (!table_has_column($pdo, 'bible', 'testament')) {
+        $pdo->exec("ALTER TABLE bible ADD COLUMN testament TEXT");
+    }
+
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_bible_book_chapter ON bible(book, chapter)');
+    $pdo->exec('CREATE INDEX IF NOT EXISTS idx_bible_testament ON bible(testament)');
+
+    $pdo->exec("CREATE VIRTUAL TABLE IF NOT EXISTS bible_fts USING fts5(book, text, content='bible', content_rowid='id')");
+
+    $pdo->exec('CREATE TRIGGER IF NOT EXISTS bible_ai_trigger AFTER INSERT ON bible BEGIN
+        INSERT INTO bible_fts(rowid, book, text) VALUES (new.id, new.book, new.text);
+    END;');
+    $pdo->exec('CREATE TRIGGER IF NOT EXISTS bible_ad_trigger AFTER DELETE ON bible BEGIN
+        INSERT INTO bible_fts(bible_fts, rowid, book, text) VALUES ("delete", old.id, old.book, old.text);
+    END;');
+    $pdo->exec('CREATE TRIGGER IF NOT EXISTS bible_au_trigger AFTER UPDATE ON bible BEGIN
+        INSERT INTO bible_fts(bible_fts, rowid, book, text) VALUES ("delete", old.id, old.book, old.text);
+        INSERT INTO bible_fts(rowid, book, text) VALUES (new.id, new.book, new.text);
+    END;');
+
+    $pdo->exec('CREATE TABLE IF NOT EXISTS topics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        slug TEXT NOT NULL UNIQUE,
+        title TEXT NOT NULL,
+        summary TEXT,
+        filters TEXT
+    )');
+
+    $pdo->exec('CREATE TABLE IF NOT EXISTS topic_passages (
+        topic_id INTEGER NOT NULL REFERENCES topics(id) ON DELETE CASCADE,
+        bible_id INTEGER NOT NULL REFERENCES bible(id) ON DELETE CASCADE,
+        note TEXT,
+        PRIMARY KEY(topic_id, bible_id)
+    )');
+
+    seed_bible_with_niv($pdo);
+    seed_topics($pdo);
+}
+
+function testament_for_book(string $book): string
+{
+    $ot = ['Genesis', 'Exodus', 'Leviticus', 'Numbers', 'Deuteronomy', 'Joshua', 'Judges', 'Ruth', '1 Samuel', '2 Samuel', '1 Kings', '2 Kings', '1 Chronicles', '2 Chronicles', 'Ezra', 'Nehemiah', 'Esther', 'Job', 'Psalm', 'Proverbs', 'Ecclesiastes', 'Song of Songs', 'Isaiah', 'Jeremiah', 'Lamentations', 'Ezekiel', 'Daniel', 'Hosea', 'Joel', 'Amos', 'Obadiah', 'Jonah', 'Micah', 'Nahum', 'Habakkuk', 'Zephaniah', 'Haggai', 'Zechariah', 'Malachi'];
+    return in_array($book, $ot, true) ? 'OT' : 'NT';
+}
+
+function seed_bible_with_niv(PDO $pdo): void
+{
+    $dataPath = __DIR__ . '/data/niv.json';
     $count = (int) $pdo->query('SELECT COUNT(*) FROM bible')->fetchColumn();
+    if (!file_exists($dataPath)) {
+        if ($count === 0) {
+            $seed = [
+                ['Matthew', 5, 9, 'Blessed are the peacemakers, for they will be called children of God.', 'NT'],
+                ['Esther', 4, 14, 'And who knows but that you have come to your royal position for such a time as this?', 'OT'],
+                ['Isaiah', 58, 6, 'Is not this the kind of fasting I have chosen: to loose the chains of injustice and untie the cords of the yoke?', 'OT'],
+            ];
+            $stmt = $pdo->prepare('INSERT INTO bible (book, chapter, verse, text, testament) VALUES (?, ?, ?, ?, ?)');
+            foreach ($seed as $row) {
+                $stmt->execute($row);
+            }
+            $pdo->exec("INSERT INTO bible_fts(bible_fts) VALUES('rebuild')");
+        }
+        return;
+    }
+
+    $json = json_decode((string) file_get_contents($dataPath), true);
+    if (!is_array($json)) {
+        return;
+    }
+
+    if ($count < count($json)) {
+        $pdo->exec('DELETE FROM topic_passages');
+        $pdo->exec('DELETE FROM bible');
+        $count = 0;
+    }
+
     if ($count === 0) {
-        $seed = [
-            ['Matthew', 5, 9, 'Blessed are the peacemakers, for they will be called children of God.'],
-            ['Esther', 4, 14, 'And who knows but that you have come to your royal position for such a time as this?'],
-            ['Isaiah', 58, 6, "Is not this the kind of fasting I have chosen: to loose the chains of injustice and untie the cords of the yoke?"],
+        $stmt = $pdo->prepare('INSERT INTO bible (book, chapter, verse, text, testament) VALUES (?, ?, ?, ?, ?)');
+        foreach ($json as $row) {
+            $testament = $row['testament'] ?? testament_for_book((string) $row['book']);
+            $stmt->execute([
+                $row['book'],
+                (int) $row['chapter'],
+                (int) $row['verse'],
+                $row['text'],
+                $testament,
+            ]);
+        }
+        $pdo->exec("INSERT INTO bible_fts(bible_fts) VALUES('rebuild')");
+    }
+}
+
+function parse_reference(string $reference): ?array
+{
+    $clean = trim($reference);
+    if ($clean === '') {
+        return null;
+    }
+    $pattern = '/^(?<book>[1-3]?\s?[A-Za-z ]+)\s+(?<chapter>\d+)(?::(?<verse>\d+)(?:-(?<end>\d+))?)?/';
+    if (preg_match($pattern, $clean, $matches)) {
+        return [
+            'book' => trim($matches['book']),
+            'chapter' => (int) $matches['chapter'],
+            'verse' => isset($matches['verse']) ? (int) $matches['verse'] : null,
+            'end' => isset($matches['end']) && $matches['end'] !== '' ? (int) $matches['end'] : null,
         ];
-        $stmt = $pdo->prepare('INSERT INTO bible (book, chapter, verse, text) VALUES (?, ?, ?, ?)');
-        foreach ($seed as $row) {
-            $stmt->execute($row);
+    }
+    return null;
+}
+
+function expand_reference(string $reference): array
+{
+    $parsed = parse_reference($reference);
+    if (!$parsed) {
+        return [];
+    }
+
+    $book = $parsed['book'];
+    $chapter = $parsed['chapter'];
+    $verse = $parsed['verse'] ?? 1;
+    $end = $parsed['end'] ?? $verse;
+    $verses = [];
+    for ($v = $verse; $v <= $end; $v++) {
+        $verses[] = [$book, $chapter, $v];
+    }
+    return $verses;
+}
+
+function seed_topics(PDO $pdo): void
+{
+    $dataPath = __DIR__ . '/data/topics.json';
+    if (!file_exists($dataPath)) {
+        return;
+    }
+
+    $existing = (int) $pdo->query('SELECT COUNT(*) FROM topics')->fetchColumn();
+    if ($existing > 0) {
+        return;
+    }
+
+    $json = json_decode((string) file_get_contents($dataPath), true);
+    if (!is_array($json)) {
+        return;
+    }
+
+    $topicStmt = $pdo->prepare('INSERT INTO topics (slug, title, summary, filters) VALUES (?, ?, ?, ?)');
+    $pivotStmt = $pdo->prepare('INSERT OR IGNORE INTO topic_passages (topic_id, bible_id, note) VALUES (?, ?, ?)');
+
+    foreach ($json as $topic) {
+        $filters = json_encode($topic['filters'] ?? []);
+        $topicStmt->execute([
+            $topic['slug'],
+            $topic['title'],
+            $topic['summary'] ?? null,
+            $filters,
+        ]);
+        $topicId = (int) $pdo->lastInsertId();
+        foreach ($topic['references'] ?? [] as $ref) {
+            foreach (expand_reference((string) $ref) as $triple) {
+                [$book, $chapter, $verse] = $triple;
+                $lookup = $pdo->prepare('SELECT id FROM bible WHERE book = ? AND chapter = ? AND verse = ? LIMIT 1');
+                $lookup->execute([$book, $chapter, $verse]);
+                $bibleId = $lookup->fetchColumn();
+                if ($bibleId) {
+                    $pivotStmt->execute([$topicId, $bibleId, null]);
+                }
+            }
         }
     }
 }

@@ -1,0 +1,140 @@
+{
+  "id": "matthew",
+  "title": "Gospel of Matthew",
+  "subtitle": "Walking with Jesus",
+  "summary": "A 30-day journey following Jesus’ life, teachings, and fulfillment of prophecy with space to pray and respond.",
+  "theme": "Gospel",
+  "estimatedMinutes": 22,
+  "days": [
+    {
+      "day": 1,
+      "title": "Roots and arrival",
+      "summary": "Trace Jesus’ genealogy and birth to see God’s faithfulness generation after generation.",
+      "readings": [
+        {
+          "reference": "Matthew 1:1-25",
+          "focus": "Jesus’ lineage and Joseph’s obedience",
+          "note": "Matthew anchors the story in Abraham and David to show Jesus as the promised King."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "How does Jesus’ family line reveal God’s patience with imperfect people?",
+          "type": "observation"
+        },
+        {
+          "question": "Where do you see God inviting you to obey quietly like Joseph?",
+          "type": "application"
+        }
+      ],
+      "reflection": [
+        "What part of Jesus’ origin story comforts you today?",
+        "Write a short prayer thanking God for His steady work through generations."
+      ]
+    },
+    {
+      "day": 2,
+      "title": "In the wilderness",
+      "summary": "Sit with Jesus in the desert and watch how He answers temptation with Scripture.",
+      "readings": [
+        {
+          "reference": "Matthew 4:1-11",
+          "focus": "Jesus resists temptation with the Word",
+          "note": "Notice how Jesus quotes Deuteronomy, rooting His answers in Israel’s history."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Which temptation resonates most with your current season?",
+          "type": "self-examination"
+        },
+        {
+          "question": "What passages can you carry as answers to pressure or doubt?",
+          "type": "scripture"
+        }
+      ],
+      "reflection": [
+        "How is the Spirit leading you into trust today?",
+        "Write a prayer for resilience and dependence on God’s Word."
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Invitation to follow",
+      "summary": "Watch Jesus call fishermen to become disciples and imagine His call to you.",
+      "readings": [
+        {
+          "reference": "Matthew 4:18-25",
+          "focus": "Jesus calls ordinary people",
+          "note": "The kingdom announcement comes with healing and inclusion of the marginalized."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "What would it look like to leave your nets this week?",
+          "type": "application"
+        },
+        {
+          "question": "How does Jesus’ compassion for the crowds shape your view of ministry?",
+          "type": "reflection"
+        }
+      ],
+      "reflection": [
+        "Name one barrier that keeps you from responding quickly to Jesus.",
+        "Pray for a teachable spirit as you follow."
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Blessed and anchored",
+      "summary": "Listen to the Beatitudes and the call to be salt and light in a weary world.",
+      "readings": [
+        {
+          "reference": "Matthew 5:1-16",
+          "focus": "Kingdom character and vocation",
+          "note": "Jesus speaks blessing over the unlikely—poor in spirit, meek, and merciful."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Which Beatitude do you need to rest in today?",
+          "type": "encouragement"
+        },
+        {
+          "question": "Where might God be asking you to preserve or brighten your environment?",
+          "type": "mission"
+        }
+      ],
+      "reflection": [
+        "How can you embody salt-and-light presence in one relationship this week?",
+        "Write a prayer inviting God’s blessing to flow through you."
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Teaching with authority",
+      "summary": "Notice Jesus’ authority as He interprets the Law and invites wholehearted righteousness.",
+      "readings": [
+        {
+          "reference": "Matthew 5:17-48",
+          "focus": "Fulfillment, reconciliation, and interior transformation",
+          "note": "Jesus moves from external compliance to heart-level love."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Where do you sense Jesus calling you to deeper reconciliation?",
+          "type": "relationship"
+        },
+        {
+          "question": "What does it mean for you that Jesus fulfills the Law?",
+          "type": "theology"
+        }
+      ],
+      "reflection": [
+        "List one area where you want to practice secret faithfulness this week.",
+        "Pray for a heart shaped by Jesus’ interpretation of righteousness."
+      ]
+    }
+  ]
+}

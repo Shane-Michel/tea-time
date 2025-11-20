@@ -1,0 +1,140 @@
+{
+  "id": "fasting",
+  "title": "Fasting (Topical Study)",
+  "subtitle": "Hungry for God",
+  "summary": "A focused, seven-day exploration of fasting as worship, dependence, and justice.",
+  "theme": "Practice",
+  "estimatedMinutes": 15,
+  "days": [
+    {
+      "day": 1,
+      "title": "Why fast?",
+      "summary": "Learn the heart behind Biblical fasting and how it draws us to God’s presence.",
+      "readings": [
+        {
+          "reference": "Matthew 6:16-18",
+          "focus": "Jesus’ teaching on humble fasting",
+          "note": "Fasting is assumed, not commanded, and anchored in secrecy before the Father."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "What motivates you to fast: hunger for God or pressure to perform?",
+          "type": "heart-check"
+        },
+        {
+          "question": "How can you keep fasting hidden and joyful?",
+          "type": "practice"
+        }
+      ],
+      "reflection": [
+        "Write a short prayer naming your desire for God above everything else.",
+        "What would a gentle fast look like for you this week?"
+      ]
+    },
+    {
+      "day": 2,
+      "title": "Dependence",
+      "summary": "Notice how fasting helps you remember your daily dependence on God’s provision.",
+      "readings": [
+        {
+          "reference": "Deuteronomy 8:1-10",
+          "focus": "Learning to live by every word from God",
+          "note": "Israel’s wilderness hunger trained them to trust God’s voice over visible provision."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "What cravings surface when you feel empty?",
+          "type": "awareness"
+        },
+        {
+          "question": "Where do you sense God inviting you to listen more closely?",
+          "type": "listening"
+        }
+      ],
+      "reflection": [
+        "How is God meeting you in physical or emotional hunger?",
+        "Respond with gratitude for today’s manna."
+      ]
+    },
+    {
+      "day": 3,
+      "title": "Repentance and return",
+      "summary": "Explore fasting as a doorway to confession and wholehearted return to God.",
+      "readings": [
+        {
+          "reference": "Joel 2:12-17",
+          "focus": "Return to Me with fasting and weeping",
+          "note": "God’s call is to rend our hearts, not just our garments."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Where is God inviting you to come home?",
+          "type": "repentance"
+        },
+        {
+          "question": "What would it look like to fast with your whole heart, not just outwardly?",
+          "type": "integrity"
+        }
+      ],
+      "reflection": [
+        "List two areas to return to God today.",
+        "Pray for a soft heart that responds quickly to His mercy."
+      ]
+    },
+    {
+      "day": 4,
+      "title": "Justice and compassion",
+      "summary": "Consider God’s desire for fasting that loosens injustice and cares for the vulnerable.",
+      "readings": [
+        {
+          "reference": "Isaiah 58:1-12",
+          "focus": "True fasting frees and restores",
+          "note": "God links fasting with generosity, hospitality, and advocacy."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "Who around you needs tangible relief today?",
+          "type": "mercy"
+        },
+        {
+          "question": "How could your fast overflow in generosity?",
+          "type": "action"
+        }
+      ],
+      "reflection": [
+        "Write a plan to share your resources during this fast.",
+        "Pray for eyes to see oppression the way God does."
+      ]
+    },
+    {
+      "day": 5,
+      "title": "Guidance and clarity",
+      "summary": "Watch how the early church fasted to discern God’s direction and appoint leaders.",
+      "readings": [
+        {
+          "reference": "Acts 13:1-4",
+          "focus": "Fasting with worship and mission",
+          "note": "Prayer and fasting accompanied the Spirit’s sending of Paul and Barnabas."
+        }
+      ],
+      "prompts": [
+        {
+          "question": "What decision are you seeking clarity on?",
+          "type": "discernment"
+        },
+        {
+          "question": "Who can fast and pray with you?",
+          "type": "community"
+        }
+      ],
+      "reflection": [
+        "Invite the Spirit to speak into your next step.",
+        "Record any Scriptures or impressions that surface."
+      ]
+    }
+  ]
+}

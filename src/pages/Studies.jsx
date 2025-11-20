@@ -1,9 +1,22 @@
+import { useEffect, useState } from 'react'
 import Card from '../components/Card'
 import SectionHeading from '../components/SectionHeading'
 import StudyJourney from '../components/StudyJourney'
-import { studyPlans } from '../data/studies'
+import { api } from '../lib/apiClient'
 
 export default function Studies() {
+  const [studyPlans, setStudyPlans] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    api
+      .getStudies()
+      .then((res) => setStudyPlans(res.studies || []))
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <section className="section-shell">
       <SectionHeading
@@ -11,6 +24,9 @@ export default function Studies() {
         title="Choose a pace that fits your season"
         description="Plan daily rhythms with curated readings, prompts, and reflection questions. Track progress quietly as you move through each day."
       />
+
+      {loading && <p className="page-panel">Loading studies…</p>}
+      {error && <p className="page-panel">{error}</p>}
 
       <div className="grid">
         {studyPlans.map((plan) => (

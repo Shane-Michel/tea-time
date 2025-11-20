@@ -2,8 +2,9 @@ import Button from './Button'
 import Card from './Card'
 import ProgressBar from './ProgressBar'
 import { useStudyProgress } from '../lib/useStudyProgress'
+import { useAuth } from '../lib/useAuth'
 
-function StudyDayItem({ day, completed, onToggle }) {
+function StudyDayItem({ day, completed, onToggle, disabled }) {
   return (
     <li className={`journey__day ${completed ? 'is-complete' : ''}`}>
       <div className="journey__day-header">
@@ -12,7 +13,7 @@ function StudyDayItem({ day, completed, onToggle }) {
           <h4>{day.title}</h4>
           <p className="journey__summary">{day.summary}</p>
         </div>
-        <Button variant="ghost" onClick={() => onToggle(day.day)}>
+        <Button variant="ghost" onClick={() => onToggle(day.day)} disabled={disabled}>
           {completed ? 'Mark as not done' : 'Mark complete'}
         </Button>
       </div>
@@ -54,7 +55,11 @@ function StudyDayItem({ day, completed, onToggle }) {
 }
 
 export default function StudyJourney({ plan }) {
-  const { completedDays, loading, percentComplete, toggleDay } = useStudyProgress(plan.id, plan.days.length)
+  const { user } = useAuth()
+  const { completedDays, loading, percentComplete, toggleDay, error } = useStudyProgress(
+    plan.id,
+    plan.days.length,
+  )
   const completedCount = completedDays.size
 
   return (
@@ -63,6 +68,8 @@ export default function StudyJourney({ plan }) {
         <div>
           <p className="eyebrow">Overview</p>
           <p>{plan.summary}</p>
+          {!user && <p className="card__meta-line">Sign in to track your progress.</p>}
+          {error && <p className="card__meta-line">{error}</p>}
         </div>
         <div className="journey__progress-block">
           <div className="journey__progress-label">
@@ -76,7 +83,13 @@ export default function StudyJourney({ plan }) {
       </div>
       <ul className="journey">
         {plan.days.map((day) => (
-          <StudyDayItem key={day.day} day={day} completed={completedDays.has(day.day)} onToggle={toggleDay} />
+          <StudyDayItem
+            key={day.day}
+            day={day}
+            completed={completedDays.has(day.day)}
+            onToggle={toggleDay}
+            disabled={!user}
+          />
         ))}
       </ul>
     </Card>
